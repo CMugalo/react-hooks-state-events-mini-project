@@ -3,29 +3,23 @@ import React, { useState } from "react";
 function NewTaskForm({ categories, onTaskFormSubmit }) {
   const [formData, setFormData] = useState({
     text: "",
-    category: categories[0],
+    category: categories[0], // Initialize category with the first category from the list
   });
 
-  const handleChange = (event) => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    if (formData.text.trim() !== "") {
-      const newTask = {
-        text: formData.text,
-        category: formData.category,
-      };
-
-      setFormData({ text: "", category: categories[0] });
-
-      onTaskFormSubmit(newTask);
-    }
+    onTaskFormSubmit(formData);
+    // Reset form after submission
+    setFormData({
+      text: "",
+      category: categories[0], // Reset category to the first category from the list
+    });
   };
-
   return (
     <form className="new-task-form" onSubmit={handleSubmit}>
       <label>
@@ -34,8 +28,7 @@ function NewTaskForm({ categories, onTaskFormSubmit }) {
           type="text"
           name="text"
           value={formData.text}
-          onChange={handleChange}
-          required
+          onChange={handleInputChange}
         />
       </label>
       <label>
@@ -43,14 +36,16 @@ function NewTaskForm({ categories, onTaskFormSubmit }) {
         <select
           name="category"
           value={formData.category}
-          onChange={handleChange}
-          required
+          onChange={handleInputChange}
         >
-          {categories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
-            </option>
-          ))}
+          {categories.map(
+            (category) =>
+              category !== "All" && (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              )
+          )}
         </select>
       </label>
       <input type="submit" value="Add task" />
